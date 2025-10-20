@@ -69,16 +69,19 @@ async function updateGist(date, content) {
 
 /**
  * 推送消息到 Server酱
- * @param {*} text 标题，最初256，必需
+ * @param {*} title 标题，最长32，必需
  * @param {*} desp 消息内容，最长64kb，可空
  */
-async function sendMessageToWechat(text, desp) {
-  if (typeof SCU_KEY !== 'undefined') {
-    return Axios.get(`${scuPushApi}/${SCU_KEY}.send`, {
-      params: {
-        text,
-        desp
-      }
+async function sendMessageToWechat(title, desp) {
+  if (typeof SCU_KEY !== 'undefined' && SCU_KEY) {
+    const payload = { title }
+
+    if (typeof desp !== 'undefined') {
+      payload.desp = desp
+    }
+
+    return Axios.post(`${scuPushApi}/${SCU_KEY}.send`, payload, {
+      headers: { 'Content-Type': 'application/json;charset=utf-8' }
     }).then(response => response.data)
   }
 }
